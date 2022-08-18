@@ -2,24 +2,26 @@
   "name": "daily-expense-service",
   "version": "1.0.0",
   "description": "Backend service for daily expense app.",
-  "main": "index.js",
+  "main": "service.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "daily-expense-service": "nodemon service.js"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/salihalci/daily-expense-service.git"
+  },
+  "dependencies": {
+    "express": "4.18.1",
+    "mongoose": "6.5.2",
+    "socket.io": "4.5.1",
+    "body-parser": "1.20.0",
+    "morgan": "1.10.0",
+    "swagger-ui-express": "4.5.0"
   },
   "keywords": [
     "nodejs",
     "service"
   ],
   "author": "salihalci@gmail.com",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/salihalci/daily-expense-service/issues"
-  },
-  "homepage": "https://github.com/salihalci/daily-expense-service#readme"
+  "license": "MIT"
 }
-
-
