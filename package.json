@@ -1,0 +1,23 @@
+{
+  "name": "daily-expense-service",
+  "version": "1.0.0",
+  "description": "Backend service for daily expense app.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/salihalci/daily-expense-service.git"
+  },
+  "keywords": [
+    "nodejs",
+    "service"
+  ],
+  "author": "salihalci@gmail.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/salihalci/daily-expense-service/issues"
+  },
+  "homepage": "https://github.com/salihalci/daily-expense-service#readme"
+}
