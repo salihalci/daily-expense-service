@@ -15,6 +15,8 @@ console.log("Server started at port "+PORT)
 
 // #region  mongodb
 const mongoose = require("mongoose");
+const autoIncrement = require("mongoose-auto-increment");
+
 //1.mongodb connection
 const mongodb_url="mongodb://localhost:27017/expensedb";
 const mongo_opts={
@@ -25,6 +27,10 @@ const mongo_opts={
 }
 
 mongoose.connect(mongodb_url,mongo_opts);
+
+autoIncrement.initialize(mongoose.connection); // initalize auto increment
+
+
 //2 mongoose Schema->Entity
 const expenseSchema = new mongoose.Schema({
     "_id":{
@@ -49,6 +55,8 @@ const expenseSchema = new mongoose.Schema({
     }
 
 });
+
+expenseSchema.plugin(autoIncrement.plugin, '_id'); // set auto increment to _id
 
 let collectionName="expenses"
 //3. Crud persistence object
