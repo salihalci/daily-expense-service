@@ -100,7 +100,7 @@ api.post("/budgetapp/api/v1/expenses", (req,res)=>{
         res.set("Content-Type","application/json");
         if(err){
             console.log("Hata oluştu."+err.message);
-            res.status(400).send({status:err});
+            res.status(400).send({status: err});
         } else{
             console.log("İşlem kaydedildi.")
             res.status(200).send(new_expense);
@@ -108,6 +108,41 @@ api.post("/budgetapp/api/v1/expenses", (req,res)=>{
     }); 
 });
 
+const updatableExpenseFields=["category","amount","operationDate","description"];
+
+//PUT http://localhost:7001/budgetapp/api/v1/expenses/11
+api.put("/budgetapp/api/v1/expenses/:id", (req,res)=>{
+    let id=req.params.id;
+
+    let exp =req.body; // body den post edilecek objeyi alıyoruz. body parser otomatik olarak json a çeviriyor.
+    exp._id=id;
+
+    let updatedExpense={};
+
+    //reflection
+    for(let field in exp){//body den almış olduğumuz obje içinde iterate ediyoruz.
+        if(updatableExpenseFields.includes(field))
+            updatedExpense[field]=exp[field];
+
+    }
+    
+    //expense içindeki sadece updatable fieldarın update edilmesine izin vereceğiz.
+    Expense.update(
+        {"_id":id},
+        {"$set":updatedExpense},
+        {"upsert":false},
+        (err,updated_expense)=>{ //call back fonksiyon db bize döndüğünde tetiklenir.
+            res.set("Content-Type","application/json");
+           
+            if(err){
+                console.log("Hata oluştu."+err.message);
+                res.status(400).send({status: err});
+            } else{
+                console.log("İşlem kaydedildi.")
+                res.status(200).send({"status": "ok"});
+            }
+        }); 
+});
 
 let server = api.listen(port);
 console.log("Server is up an running! Port number is "+port);
