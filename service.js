@@ -113,6 +113,41 @@ const updatableExpenseFields=["category","amount","operationDate","description"]
 //PUT http://localhost:7001/budgetapp/api/v1/expenses/11
 api.put("/budgetapp/api/v1/expenses/:id", (req,res)=>{
     let id=req.params.id;
+    //full resource
+    let exp =req.body; // body den post edilecek objeyi alıyoruz. body parser otomatik olarak json a çeviriyor.
+    exp._id=id;
+
+    let updatedExpense={};
+
+    //reflection
+    for(let field in exp){//body den almış olduğumuz obje içinde iterate ediyoruz.
+        if(updatableExpenseFields.includes(field))
+            updatedExpense[field]=exp[field];
+
+    }
+    
+    //expense içindeki sadece updatable fieldarın update edilmesine izin vereceğiz.
+    Expense.update(
+        {"_id":id},
+        {"$set":updatedExpense},
+        {"upsert":false},
+        (err,updated_expense)=>{ //call back fonksiyon db bize döndüğünde tetiklenir.
+            res.set("Content-Type","application/json");
+           
+            if(err){
+                console.log("Hata oluştu."+err.message);
+                res.status(400).send({status: err});
+            } else{
+                console.log("İşlem kaydedildi.")
+                res.status(200).send({"status": "ok"});
+            }
+        }); 
+});
+
+
+//PATCH http://localhost:7001/budgetapp/api/v1/expenses/11
+api.patch("/budgetapp/api/v1/expenses/:id", (req,res)=>{
+    let id=req.params.id;
 
     let exp =req.body; // body den post edilecek objeyi alıyoruz. body parser otomatik olarak json a çeviriyor.
     exp._id=id;
@@ -142,6 +177,72 @@ api.put("/budgetapp/api/v1/expenses/:id", (req,res)=>{
                 res.status(200).send({"status": "ok"});
             }
         }); 
+});
+
+
+
+//DELETE http://localhost:7001/budgetapp/api/v1/expenses/11
+api.delete("/budgetapp/api/v1/expenses/:id",(req,res)=>{
+    let id = req.params.id;
+    Expense.findOneAndDelete(
+        {"_id":id},
+        {_id:true},
+        (err,exp)=>{
+            
+            res.set("Content-Type","application/json");
+           
+            if(err){
+                res.status(404).send({status: err});
+            } else{
+                res.status(200).send(exp);
+            }
+        })
+
+});
+
+
+//GET http://localhost:7001/budgetapp/api/v1/expenses/11
+api.get("/budgetapp/api/v1/expenses/:id",(req,res)=>{
+    let id = req.params.id;
+    Expense.findOne(
+        {"_id":id},
+        {_id:true},
+        (err,exp)=>{
+            
+            res.set("Content-Type","application/json");
+           
+            if(err){
+                res.status(404).send({status: err});
+            } else{
+                res.status(200).send(exp);
+            }
+        })
+
+});
+
+//GET http://localhost:7001/budgetapp/api/v1/expenses?page=10&size=15
+api.get("/budgetapp/api/v1/expenses",(req,res)=>{
+
+    let page = Number(req.query.page || 0); // yoksa 0 
+    let size = Number(req.query.size || 10); //yoksa 10 tane getir.
+    let offset = page*size;
+
+
+    Expense.find(
+        {},
+        {_id:true},
+        {skip:offset,limit:size},
+        (err,expenses)=>{
+            
+            res.set("Content-Type","application/json");
+           
+            if(err){
+                res.status(404).send({status: err});
+            } else{
+                res.status(200).send(expenses);
+            }
+        })
+
 });
 
 let server = api.listen(port);
